@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<ImportedObjectsReport>
+<ImportMode mode="Duplication"/>
+<ImportedObject>
+<originalObject type="Knowledge Module" name="IKM SQL Control Append" id="35001"/>
+<parentObject type="Project" name="PROJECT_DSA" id="3001"/>
+<duplicatedObject type="Knowledge Module" name="IKM SQL Control Append" id="4001"/>
+</ImportedObject>
+</ImportedObjectsReport>
