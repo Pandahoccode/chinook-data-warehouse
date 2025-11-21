@@ -1,31 +1,4 @@
 /*******************************************************************************
-   Drop database if it exists
-********************************************************************************/
-DROP USER c##chinook CASCADE;
-
-/*******************************************************************************
-   Create database
-********************************************************************************/
-CREATE USER c##chinook
-IDENTIFIED BY chinook
-DEFAULT TABLESPACE users
-TEMPORARY TABLESPACE temp
-QUOTA 10M ON users;
-
-GRANT connect to c##chinook;
-
-GRANT resource to c##chinook;
-
-GRANT create session TO c##chinook;
-
-GRANT create table TO c##chinook;
-
-GRANT create view TO c##chinook;
-
-conn c##chinook/chinook
-
-
-/*******************************************************************************
    Create Tables
 ********************************************************************************/
 CREATE TABLE Album
@@ -185,4 +158,4 @@ ALTER TABLE Track ADD CONSTRAINT FK_TrackGenreId
     FOREIGN KEY (GenreId) REFERENCES Genre (GenreId);
 
 ALTER TABLE Track ADD CONSTRAINT FK_TrackMediaTypeId
-    FOREIGN KEY (MediaTypeId) REFERENCES MediaType (MediaTypeId);
+    FOREIGN KEY (MediaTypeId) REFERENCES MediaType (MediaTypeId)  ;
