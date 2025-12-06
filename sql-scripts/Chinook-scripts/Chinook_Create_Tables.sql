@@ -1,4 +1,19 @@
 /*******************************************************************************
+   DROP Tables even they have foreign keys contraints
+********************************************************************************/
+DROP TABLE Album CASCADE CONSTRAINTS;
+DROP TABLE Artist CASCADE CONSTRAINTS;
+DROP TABLE Customer CASCADE CONSTRAINTS;
+DROP TABLE Employee CASCADE CONSTRAINTS;
+DROP TABLE Genre CASCADE CONSTRAINTS;
+DROP TABLE Invoice CASCADE CONSTRAINTS;
+DROP TABLE InvoiceLine CASCADE CONSTRAINTS;
+DROP TABLE MediaType CASCADE CONSTRAINTS;
+DROP TABLE Playlist CASCADE CONSTRAINTS;
+DROP TABLE PlaylistTrack CASCADE CONSTRAINTS;
+DROP TABLE Track CASCADE CONSTRAINTS;
+
+/*******************************************************************************
    Create Tables
 ********************************************************************************/
 CREATE TABLE Album
