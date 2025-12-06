@@ -7,7 +7,7 @@
 --          create a separate database.
 ********************************************************************************/
 
--- ============================================================================ 
+-- ============================================================================
 -- SECTION: Schema "CHINOOK" (creates Oracle user/schema for CHINOOK)
 -- -----------------------------------------------------------------------------
 -- - Drop existing user and all owned objects
@@ -32,7 +32,7 @@ GRANT CREATE VIEW TO CHINOOK;
 conn CHINOOK/CHINOOK
 
 
--- ============================================================================ 
+-- ============================================================================
 -- SECTION: Schema "DSA_CHINOOK" (creates Oracle user/schema for CHINOOK DSA)
 -- -----------------------------------------------------------------------------
 -- - Drop existing user and all owned objects
@@ -55,3 +55,29 @@ GRANT CREATE TABLE TO DSA_CHINOOK;
 GRANT CREATE VIEW TO DSA_CHINOOK;
 
 conn DSA_CHINOOK/DSA_CHINOOK
+
+
+  -- ============================================================================
+  -- SECTION: Schema "ODS_CHINOOK" (creates Oracle user/schema for CHINOOK ODS)
+  -- -----------------------------------------------------------------------------
+  -- - Drop existing user and all owned objects
+  -- - Create user with default and temporary tablespaces and a quota
+  -- - Grant minimal privileges required to create and use schema objects
+  -- - Connect as the new user
+  -- ============================================================================
+
+  DROP USER ODS_CHINOOK CASCADE;
+
+  CREATE USER ODS_CHINOOK
+      IDENTIFIED BY ODS_CHINOOK
+      DEFAULT TABLESPACE users
+      TEMPORARY TABLESPACE temp
+      QUOTA 10M ON users;
+
+  GRANT CONNECT TO ODS_CHINOOK;
+  GRANT RESOURCE TO ODS_CHINOOK;
+  GRANT CREATE SESSION TO ODS_CHINOOK;
+  GRANT CREATE TABLE TO ODS_CHINOOK;
+  GRANT CREATE VIEW TO ODS_CHINOOK;
+
+  conn ODS_CHINOOK/ODS_CHINOOK

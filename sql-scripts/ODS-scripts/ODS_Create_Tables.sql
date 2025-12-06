@@ -1,11 +1,12 @@
 /*******************************************************************************
-   Create Tables
+   Create Tables for ODS with a column date to track when the record was added
 ********************************************************************************/
 CREATE TABLE Album
 (
     AlbumId NUMBER NOT NULL,
     Title VARCHAR2(160) NOT NULL,
     ArtistId NUMBER NOT NULL,
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_Album PRIMARY KEY  (AlbumId)
 );
 
@@ -13,6 +14,7 @@ CREATE TABLE Artist
 (
     ArtistId NUMBER NOT NULL,
     Name VARCHAR2(120),
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_Artist PRIMARY KEY  (ArtistId)
 );
 
@@ -31,6 +33,7 @@ CREATE TABLE Customer
     Fax VARCHAR2(24),
     Email VARCHAR2(60) NOT NULL,
     SupportRepId NUMBER,
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_Customer PRIMARY KEY  (CustomerId)
 );
 
@@ -51,6 +54,7 @@ CREATE TABLE Employee
     Phone VARCHAR2(24),
     Fax VARCHAR2(24),
     Email VARCHAR2(60),
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_Employee PRIMARY KEY  (EmployeeId)
 );
 
@@ -58,6 +62,7 @@ CREATE TABLE Genre
 (
     GenreId NUMBER NOT NULL,
     Name VARCHAR2(120),
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_Genre PRIMARY KEY  (GenreId)
 );
 
@@ -72,6 +77,7 @@ CREATE TABLE Invoice
     BillingCountry VARCHAR2(40),
     BillingPostalCode VARCHAR2(10),
     Total NUMBER(10,2) NOT NULL,
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_Invoice PRIMARY KEY  (InvoiceId)
 );
 
@@ -82,6 +88,7 @@ CREATE TABLE InvoiceLine
     TrackId NUMBER NOT NULL,
     UnitPrice NUMBER(10,2) NOT NULL,
     Quantity NUMBER NOT NULL,
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_InvoiceLine PRIMARY KEY  (InvoiceLineId)
 );
 
@@ -89,6 +96,7 @@ CREATE TABLE MediaType
 (
     MediaTypeId NUMBER NOT NULL,
     Name VARCHAR2(120),
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_MediaType PRIMARY KEY  (MediaTypeId)
 );
 
@@ -96,6 +104,7 @@ CREATE TABLE Playlist
 (
     PlaylistId NUMBER NOT NULL,
     Name VARCHAR2(120),
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_Playlist PRIMARY KEY  (PlaylistId)
 );
 
@@ -103,6 +112,7 @@ CREATE TABLE PlaylistTrack
 (
     PlaylistId NUMBER NOT NULL,
     TrackId NUMBER NOT NULL,
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_PlaylistTrack PRIMARY KEY  (PlaylistId, TrackId)
 );
 
@@ -117,45 +127,6 @@ CREATE TABLE Track
     Milliseconds NUMBER NOT NULL,
     Bytes NUMBER,
     UnitPrice NUMBER(10,2) NOT NULL,
+    DateAdd DATE DEFAULT SYSDATE NOT NULL,
     CONSTRAINT PK_Track PRIMARY KEY  (TrackId)
 );
-
-/*******************************************************************************
-   Create Primary Key Unique Indexes
-********************************************************************************/
-
-/*******************************************************************************
-   Create Foreign Keys
-********************************************************************************/
-ALTER TABLE Album ADD CONSTRAINT FK_AlbumArtistId
-    FOREIGN KEY (ArtistId) REFERENCES Artist (ArtistId);
-
-ALTER TABLE Customer ADD CONSTRAINT FK_CustomerSupportRepId
-    FOREIGN KEY (SupportRepId) REFERENCES Employee (EmployeeId);
-
-ALTER TABLE Employee ADD CONSTRAINT FK_EmployeeReportsTo
-    FOREIGN KEY (ReportsTo) REFERENCES Employee (EmployeeId);
-
-ALTER TABLE Invoice ADD CONSTRAINT FK_InvoiceCustomerId
-    FOREIGN KEY (CustomerId) REFERENCES Customer (CustomerId);
-
-ALTER TABLE InvoiceLine ADD CONSTRAINT FK_InvoiceLineInvoiceId
-    FOREIGN KEY (InvoiceId) REFERENCES Invoice (InvoiceId);
-
-ALTER TABLE InvoiceLine ADD CONSTRAINT FK_InvoiceLineTrackId
-    FOREIGN KEY (TrackId) REFERENCES Track (TrackId);
-
-ALTER TABLE PlaylistTrack ADD CONSTRAINT FK_PlaylistTrackPlaylistId
-    FOREIGN KEY (PlaylistId) REFERENCES Playlist (PlaylistId);
-
-ALTER TABLE PlaylistTrack ADD CONSTRAINT FK_PlaylistTrackTrackId
-    FOREIGN KEY (TrackId) REFERENCES Track (TrackId);
-
-ALTER TABLE Track ADD CONSTRAINT FK_TrackAlbumId
-    FOREIGN KEY (AlbumId) REFERENCES Album (AlbumId);
-
-ALTER TABLE Track ADD CONSTRAINT FK_TrackGenreId
-    FOREIGN KEY (GenreId) REFERENCES Genre (GenreId);
-
-ALTER TABLE Track ADD CONSTRAINT FK_TrackMediaTypeId
-    FOREIGN KEY (MediaTypeId) REFERENCES MediaType (MediaTypeId)  ;
