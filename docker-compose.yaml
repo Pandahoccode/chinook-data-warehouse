@@ -1,0 +1,52 @@
+# Multi-service stack for Chinook data warehouse tooling.
+services:
+  # PostgreSQL database used by Airflow and dbt.
+  postgres:
+    image: postgres:17 # PostgreSQL container image/version.
+    container_name: postgres-chinook # Fixed container name for easier local ops.
+    restart: always # Auto-restart unless manually stopped.
+    env_file:
+      - .env # Loads DB credentials and related environment variables.
+    ports:
+      - "15432:5432" # Host:Container (connect locally on port 15432).
+    volumes:
+      - ./postgres/airflow_init.sql:/docker-entrypoint-initdb.d/airflow_init.sql # Init script executed on first DB setup.
+      - ./postgres/data:/var/lib/postgresql/data # Persistent database storage.
+
+  # Apache Airflow orchestration service.
+  airflow:
+    image: apache/airflow:3.1.7 # Airflow container image/version.
+    container_name: airflow-chinook
+    restart: always
+    depends_on:
+      - postgres # Starts after postgres service.
+    env_file:
+      - .env # Reuses shared secrets/config from .env.
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor # Executes tasks locally in the container.
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/$airflow # Airflow metadata DB connection string.
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false" # Disables default example DAGs.
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags # DAG source files.
+      - ./airflow/logs:/opt/airflow/logs # Persisted task and scheduler logs.
+      - ./airflow/plugins:/opt/airflow/plugins # Custom Airflow plugins.
+    ports:
+      - "8080:8080" # Airflow web UI.
+    command: >
+      bash -c "
+      airflow db migrate &&   # Ensures metadata DB schema is up-to-date.
+      airflow standalone      # Starts scheduler, webserver, and required components.
+      "
+
+  # dbt service container (kept running for interactive use).
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.7.0 # dbt with Postgres adapter.
+    container_name: dbt-chinook
+    depends_on:
+      - postgres # Requires DB service.
+    env_file:
+      - .env
+    volumes:
+      - ./dbt:/usr/app # Mounts dbt project directory.
+    working_dir: /usr/app # Default working directory inside container.
+    command: tail -f /dev/null # Keeps container alive for manual dbt commands.
