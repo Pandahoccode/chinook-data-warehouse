@@ -32,11 +32,22 @@ services:
       - ./airflow/plugins:/opt/airflow/plugins # Custom Airflow plugins.
     ports:
       - "8080:8080" # Airflow web UI.
+     # Ensures metadata DB schema is up-to-date.
+     # Starts scheduler, webserver, and required components.
     command: >
       bash -c "
-      airflow db migrate &&   # Ensures metadata DB schema is up-to-date.
-      airflow standalone      # Starts scheduler, webserver, and required components.
+      airflow db migrate &&
+      airflow standalone &&
+      airflow connections add 'chinook_postgres'
+      --conn-type 'postgres'
+      --conn-host 'localhost'
+      --conn-schema 'chinook'
+      --conn-login 'chinook'
+      --conn-password 'chinook'
+      --conn-port '5432' || true &&
+      airflow connections get chinook_postgres
       "
+
 
   # dbt service container (kept running for interactive use).
   dbt:
@@ -50,3 +61,6 @@ services:
       - ./dbt:/usr/app # Mounts dbt project directory.
     working_dir: /usr/app # Default working directory inside container.
     command: tail -f /dev/null # Keeps container alive for manual dbt commands.
+
+volumes:
+  postgres_data:
