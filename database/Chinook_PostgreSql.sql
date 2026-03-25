@@ -23,9 +23,7 @@ DROP SCHEMA IF EXISTS chinook;
    Create database
 ********************************************************************************/
 CREATE SCHEMA chinook;
-
-
-\c chinook;
+SET SCHEMA chinook;
 
 
 /*******************************************************************************
