@@ -1,0 +1,12 @@
+chinook_dbt:
+  outputs:
+    dev:
+      dbname: chinook
+      host: 172.18.0.8
+      pass: chinook
+      port: 5432
+      schema: ""
+      threads: 4
+      type: postgres
+      user: chinook
+  target: dev

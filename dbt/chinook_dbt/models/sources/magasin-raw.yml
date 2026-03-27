@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: magasin
+    schema: magasin
+    database: chinook
+    tables:
+      - name: invoice
+        description: "Raw invoice data from magasin system"
+      - name: invoice_line
+        description: "Raw invoice line data from magasin system"

@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: chinook
+    schema: chinook
+    database: chinook
+    tables:
+      - name: album
+        description: "Raw album data from Chinook"
+      - name: artist
+        description: "Raw artist data from Chinook"
+      - name: customer
+        description: "Raw customer data from Chinook"
+      - name: employee
+        description: "Raw employee data from Chinook"
+      - name: genre
+        description: "Raw genre data from Chinook"
+      - name: invoice
+        description: "Raw invoice data from Chinook"
+      - name: invoice_line
+        description: "Raw invoice line data from Chinook"
+      - name: media_type
+        description: "Raw media type data from Chinook"
+      - name: playlist
+        description: "Raw playlist data from Chinook"
+      - name: playlist_track
+        description: "Raw playlist track data from Chinook"
+      - name: track
+        description: "Raw track data from Chinook"
