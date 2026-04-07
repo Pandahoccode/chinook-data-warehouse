@@ -25,7 +25,7 @@ with DAG(
       dbt_run_dsa_chinook = DockerOperator(
           task_id="dbt_run_dsa_chinook",
           image="ghcr.io/dbt-labs/dbt-postgres:1.9.0",
-          command="run --select chinook.dsa.*",
+          command="run --select dsa.chinook.*",
           network_mode="bridge",
           docker_url="unix://var/run/docker.sock",
           environment={
@@ -43,7 +43,7 @@ with DAG(
       dbt_run_dsa_magasin = DockerOperator(
           task_id="dbt_run_dsa_magasin",
           image="ghcr.io/dbt-labs/dbt-postgres:1.9.0",
-          command="run --select magasin.dsa.*",
+          command="run --select dsa.magasin.*",
           network_mode="bridge",
           docker_url="unix:///var/run/docker.sock",
           environment={
@@ -58,10 +58,10 @@ with DAG(
           auto_remove="success",
       )
 
-      dbt_test_dsa = DockerOperator(
-          task_id="dbt_test_dsa",
+      dbt_tests_dsa = DockerOperator(
+          task_id="dbt_tests_dsa",
           image="ghcr.io/dbt-labs/dbt-postgres:1.9.0",
-          command="test --select magasin.dsa.*, chinook.dsa.*",
+          command="test --select dsa.*",
           network_mode="bridge",
           docker_url="unix:///var/run/docker.sock",
           environment={
@@ -75,4 +75,5 @@ with DAG(
           mount_tmp_dir=False,
           auto_remove="success",
       )
-      dbt_run_dsa_chinook >> dbt_run_dsa_magasin >> dbt_test_dsa
+
+      [dbt_run_dsa_chinook, dbt_run_dsa_magasin] >> dbt_tests_dsa

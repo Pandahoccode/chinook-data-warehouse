@@ -3,8 +3,7 @@
         materialized='table',
         schema='dsa_chinook',
         post_hook=[
-            "ALTER TABLE {{ this }} ADD PRIMARY KEY (employee_id)",
-            "ALTER TABLE {{ this }} ADD FOREIGN KEY (reports_to) REFERENCES {{ source('dsa_chinook', 'dsa_chinook_employee') }}(employee_id)"
+            "ALTER TABLE {{ this }} ADD PRIMARY KEY (employee_id)"
         ]
     )
 }}

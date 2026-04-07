@@ -3,9 +3,8 @@
         materialized='table',
         schema='dsa_magasin',
         post_hook=[
-            "ALTER TABLE {{ this }} ADD PRIMARY KEY (invoice_id)",
-            "ALTER TABLE {{ this }} ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-        ]
+            "ALTER TABLE {{ this }} ADD PRIMARY KEY (invoice_id)"
+         ]
     )
 }}
 

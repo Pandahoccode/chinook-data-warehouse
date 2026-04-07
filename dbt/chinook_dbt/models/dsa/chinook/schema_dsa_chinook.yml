@@ -1,0 +1,174 @@
+version: 2
+
+models:
+  - name: dsa_chinook_artist
+    description: "DSA layer artist data from Chinook"
+    columns:
+      - name: artist_id
+        description: "Primary key for artist"
+        tests:
+          - unique
+          - not_null
+      - name: artist_name
+        description: "Artist name"
+
+  - name: dsa_chinook_album
+    description: "DSA layer album data from Chinook"
+    columns:
+      - name: album_id
+        description: "Primary key for album"
+        tests:
+          - unique
+          - not_null
+      - name: album_title
+        description: "Album title"
+      - name: artist_id
+        description: "Foreign key to artist"
+        tests:
+          - relationships:
+              to: ref('dsa_chinook_artist')
+              field: artist_id
+
+  - name: dsa_chinook_customer
+    description: "DSA layer customer data from Chinook"
+    columns:
+      - name: customer_id
+        description: "Primary key for customer"
+        tests:
+          - unique
+          - not_null
+      - name: support_rep_id
+        description: "Foreign key to employee"
+        tests:
+          - relationships:
+              to: ref('dsa_chinook_employee')
+              field: employee_id
+
+  - name: dsa_chinook_employee
+    description: "DSA layer employee data from Chinook"
+    columns:
+      - name: employee_id
+        description: "Primary key for employee"
+        tests:
+          - unique
+          - not_null
+      - name: reports_to
+        description: "Self-referencing foreign key to manager"
+        tests:
+          - relationships:
+              to: ref('dsa_chinook_employee')
+              field: employee_id
+
+  - name: dsa_chinook_genre
+    description: "DSA layer genre data from Chinook"
+    columns:
+      - name: genre_id
+        description: "Primary key for genre"
+        tests:
+          - unique
+          - not_null
+      - name: genre_name
+        description: "Genre name"
+
+  - name: dsa_chinook_media_type
+    description: "DSA layer media type data from Chinook"
+    columns:
+      - name: media_type_id
+        description: "Primary key for media type"
+        tests:
+          - unique
+          - not_null
+      - name: media_type_name
+        description: "Media type name"
+
+  - name: dsa_chinook_playlist
+    description: "DSA layer playlist data from Chinook"
+    columns:
+      - name: playlist_id
+        description: "Primary key for playlist"
+        tests:
+          - unique
+          - not_null
+      - name: playlist_name
+        description: "Playlist name"
+
+  - name: dsa_chinook_playlist_track
+    description: "DSA layer playlist-track mapping from Chinook"
+    columns:
+      - name: playlist_id
+        description: "Foreign key to playlist"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dsa_chinook_playlist')
+              field: playlist_id
+      - name: track_id
+        description: "Foreign key to track"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dsa_chinook_track')
+              field: track_id
+              
+  - name: dsa_chinook_track
+    description: "DSA layer track data from Chinook"
+    columns:
+      - name: track_id
+        description: "Primary key for track"
+        tests:
+          - unique
+          - not_null
+      - name: album_id
+        description: "Foreign key to album"
+        tests:
+          - relationships:
+              to: ref('dsa_chinook_album')
+              field: album_id
+      - name: media_type_id
+        description: "Foreign key to media type"
+        tests:
+          - relationships:
+              to: ref('dsa_chinook_media_type')
+              field: media_type_id
+      - name: genre_id
+        description: "Foreign key to genre"
+        tests:
+          - relationships:
+              to: ref('dsa_chinook_genre')
+              field: genre_id
+
+  - name: dsa_chinook_invoice
+    description: "DSA layer invoice data from Chinook"
+    columns:
+      - name: invoice_id
+        description: "Primary key for invoice"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Foreign key to customer"
+        tests:
+          - relationships:
+              to: ref('dsa_chinook_customer')
+              field: customer_id
+
+  - name: dsa_chinook_invoice_line
+    description: "DSA layer invoice line data from Chinook"
+    columns:
+      - name: invoice_line_id
+        description: "Primary key for invoice line"
+        tests:
+          - unique
+          - not_null
+      - name: invoice_id
+        description: "Foreign key to invoice"
+        tests:
+          - relationships:
+              to: ref('dsa_chinook_invoice')
+              field: invoice_id
+      - name: track_id
+        description: "Foreign key to track"
+        tests:
+          - relationships:
+              to: ref('dsa_chinook_track')
+              field: track_id

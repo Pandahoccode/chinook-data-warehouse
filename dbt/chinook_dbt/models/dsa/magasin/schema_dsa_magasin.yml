@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: dsa_magasin_invoice
+    description: "DSA layer invoice data from Magasin"
+    columns:
+      - name: invoice_id
+        description: "Primary key for invoice"
+        tests:
+          - unique
+          - not_null
+      - name: source_system
+        description: "Source system identifier"
+
+  - name: dsa_magasin_invoice_line
+    description: "DSA layer invoice line data from Magasin"
+    columns:
+      - name: invoice_line_id
+        description: "Primary key for invoice line"
+        tests:
+          - unique
+          - not_null
+      - name: invoice_id
+        description: "Foreign key to invoice"
+        tests:
+          - relationships:
+              to: ref('dsa_magasin_invoice')
+              field: invoice_id
+      - name: source_system
+        description: "Source system identifier"

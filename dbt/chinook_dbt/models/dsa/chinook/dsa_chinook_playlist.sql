@@ -4,7 +4,7 @@
         schema='dsa_chinook',
         post_hook=[
             "ALTER TABLE {{ this }} ADD PRIMARY KEY (playlist_id)"
-        ]
+         ]
     )
 }}
 
