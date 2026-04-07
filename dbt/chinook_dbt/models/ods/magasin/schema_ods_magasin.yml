@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: ods_magasin_invoice
+    description: "ODS layer magasin invoice data with update timestamp"
+    columns:
+      - name: invoice_id
+        tests:
+          - unique
+          - not_null
+      - name: source_system
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_magasin_invoice_line
+    description: "ODS layer magasin invoice line data with update timestamp"
+    columns:
+      - name: invoice_line_id
+        tests:
+          - unique
+          - not_null
+      - name: invoice_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('ods_magasin_invoice')
+              field: invoice_id
+      - name: source_system
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour

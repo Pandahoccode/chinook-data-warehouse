@@ -1,0 +1,195 @@
+version: 2
+
+models:
+  - name: ods_chinook_artist
+    description: "ODS layer artist data with update timestamp"
+    columns:
+      - name: artist_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: artist_name
+        description: "Artist name"
+      - name: updated_at
+        description: "Timestamp when record was updated"
+        tests:
+          - not_null
+      - name: update_hour
+        description: "Hour of the day when update occurred"
+
+  - name: ods_chinook_album
+    description: "ODS layer album data with update timestamp"
+    columns:
+      - name: album_id
+        tests:
+          - unique
+          - not_null
+      - name: album_title
+        description: "Album title"
+      - name: artist_id
+        description: "Foreign key to artist"
+        tests:
+          - relationships:
+              to: ref('ods_chinook_artist')
+              field: artist_id
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_chinook_customer
+    description: "ODS layer customer data with update timestamp"
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: support_rep_id
+        tests:
+          - relationships:
+              to: ref('ods_chinook_employee')
+              field: employee_id
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_chinook_employee
+    description: "ODS layer employee data with update timestamp"
+    columns:
+      - name: employee_id
+        tests:
+          - unique
+          - not_null
+      - name: reports_to
+        tests:
+          - relationships:
+              to: ref('ods_chinook_employee')
+              field: employee_id
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_chinook_genre
+    description: "ODS layer genre data with update timestamp"
+    columns:
+      - name: genre_id
+        tests:
+          - unique
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_chinook_media_type
+    description: "ODS layer media type data with update timestamp"
+    columns:
+      - name: media_type_id
+        tests:
+          - unique
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_chinook_playlist
+    description: "ODS layer playlist data with update timestamp"
+    columns:
+      - name: playlist_id
+        tests:
+          - unique
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_chinook_playlist_track
+    description: "ODS layer playlist-track mapping with update timestamp"
+    columns:
+      - name: playlist_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('ods_chinook_playlist')
+              field: playlist_id
+      - name: track_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('ods_chinook_track')
+              field: track_id
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_chinook_track
+    description: "ODS layer track data with update timestamp"
+    columns:
+      - name: track_id
+        tests:
+          - unique
+          - not_null
+      - name: album_id
+        tests:
+          - relationships:
+              to: ref('ods_chinook_album')
+              field: album_id
+      - name: media_type_id
+        tests:
+          - relationships:
+              to: ref('ods_chinook_media_type')
+              field: media_type_id
+      - name: genre_id
+        tests:
+          - relationships:
+              to: ref('ods_chinook_genre')
+              field: genre_id
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_chinook_invoice
+    description: "ODS layer invoice data with update timestamp"
+    columns:
+      - name: invoice_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('ods_chinook_customer')
+              field: customer_id
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
+
+  - name: ods_chinook_invoice_line
+    description: "ODS layer invoice line data with update timestamp"
+    columns:
+      - name: invoice_line_id
+        tests:
+          - unique
+          - not_null
+      - name: invoice_id
+        tests:
+          - relationships:
+              to: ref('ods_chinook_invoice')
+              field: invoice_id
+      - name: track_id
+        tests:
+          - relationships:
+              to: ref('ods_chinook_track')
+              field: track_id
+      - name: updated_at
+        tests:
+          - not_null
+      - name: update_hour
