@@ -2,7 +2,7 @@
 
 {{
     config(
-        target_schema='dbt_snapshots_scd',
+        target_schema='csd_snapshot_chinook',
         unique_key='invoice_id',
         strategy='timestamp',
         updated_at='updated_at',

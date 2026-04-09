@@ -34,5 +34,4 @@ with DAG(
     )
 
 
-    create_schemas >> load_chinook
-    create_schemas >> load_magasin
+    create_schemas >> [load_chinook, load_magasin ]
