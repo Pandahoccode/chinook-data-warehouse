@@ -62,8 +62,20 @@ with DAG(
         command="test --select snapshot.*",
     )
 
+    dbt_run_dwh = dbt_docker_operator(
+        task_id="dbt_run_dwh",
+        command="run --select dwh.*",
+    )
+
+    dbt_tests_dwh = dbt_docker_operator(
+        task_id="dbt_tests_dwh",
+        command="test --select dwh.*",
+    )
+
     [dbt_run_dsa_chinook, dbt_run_dsa_magasin] >> dbt_tests_dsa
     dbt_tests_dsa >> [dbt_run_ods_chinook, dbt_run_ods_magasin] >> dbt_tests_ods
     dbt_tests_ods >> [dbt_run_snapshot_chinook, dbt_run_snapshot_magasin] >> dbt_tests_snapshot
+    dbt_tests_snapshot >> dbt_run_dwh >> dbt_tests_dwh
+
 
 
