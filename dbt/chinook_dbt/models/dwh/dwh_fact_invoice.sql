@@ -37,9 +37,11 @@ SELECT
   i.billing_country,
   i.billing_postal_code,
   'chinook' AS source_system
-FROM {{ ref('ods_chinook_invoice_line') }} il
-JOIN {{ ref('ods_chinook_invoice') }} i
+FROM {{ ref('snapshot_chinook_invoice_line') }} il
+JOIN {{ ref('snapshot_chinook_invoice') }} i
   ON il.invoice_id = i.invoice_id
+ AND il.dbt_valid_to IS NULL
+ AND i.dbt_valid_to IS NULL
 
 -- CUSTOMER SCD2
 JOIN {{ ref('dwh_dim_customer') }} dc
@@ -104,8 +106,10 @@ SELECT
   i.billing_country,
   i.billing_postal_code,
   'magasin' AS source_system
-FROM {{ ref('ods_magasin_invoice_line') }} il
-JOIN {{ ref('ods_magasin_invoice') }} i
+FROM {{ ref('snapshot_magasin_invoice_line') }} il
+JOIN {{ ref('snapshot_magasin_invoice') }} i
   ON il.invoice_id = i.invoice_id
+ AND il.dbt_valid_to IS NULL
+ AND i.dbt_valid_to IS NULL
 JOIN {{ ref('dwh_dim_date') }} dd
   ON DATE(i.invoice_date) = dd.date_id
