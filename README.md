@@ -72,13 +72,25 @@ graph TD
 *   **Target Schema**: Materialized directly under the **`datawarehouse`** schema.
 
 ### 📊 Warehouse Volume Statistics
-The final fact table compiles and unifies transactional volumes from both sources:
 
-| Source System | Row Count |
-| :--- | :--- |
-| **chinook** | 573,440 |
-| **magasin** | 71,008 |
-| **Total** | **644,448** |
+Below are the database counts reflecting the fully loaded data warehouse tables within the **`datawarehouse`** schema:
+
+#### 1. Core Table Volumes
+| Table Name | Row Count | Description |
+| :--- | :--- | :--- |
+| **`dwh_dim_customer`** | 295 | Consolidated customer records with SCD Type 2 tracking |
+| **`dwh_dim_employee`** | 40 | Consolidated employee and manager hierarchy records |
+| **`dwh_dim_track`** | 17,515 | Track catalog dataset including composer, album, and media definitions |
+| **`dwh_dim_playlist`** | 90 | Playlist definitions |
+| **`dwh_bridge_playlist_track`** | 43,575 | M-N relationship map between playlists and tracks |
+| **`dwh_fact_invoice`** | 1,510,950 | Unified transactional sales invoice line facts |
+
+#### 2. Invoice Fact Breakdown by Source System
+| Source System | Row Count | Percentage |
+| :--- | :--- | :--- |
+| **chinook** | 1,400,000 | 92.66% |
+| **magasin** | 110,950 | 7.34% |
+| **Total** | **1,510,950** | **100.00%** |
 
 ---
 
