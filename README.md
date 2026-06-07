@@ -2,7 +2,7 @@
 
 ## 🎓 Project Overview & Context
 
-This repository hosts a high-fidelity ELT (Extract, Load, Transform) data warehouse pipeline. 
+This repository hosts a high-fidelity ELT (Extract, Load, Transform) data warehouse pipeline.
 
 > [!NOTE]
 > This is a **university project**; however, the implementation has been scaled and optimized to match professional, industry-grade standards. Instead of simple query scripts or manual database loads, this project deploys a fully containerized pipeline utilizing modern data stack tools—specifically **Apache Airflow**, **dbt (data build tool)**, and **PostgreSQL**—to integrate, clean, trace, and model transactional sales data from two distinct business entities.
@@ -23,22 +23,22 @@ graph TD
         A[Chinook Raw Data]
         B[Magasin Raw Data]
     end
-    
+
     subgraph "Staging Area (DSA)"
         C[dsa.chinook.*]
         D[dsa.magasin.*]
     end
-    
+
     subgraph "Integration Area (ODS)"
         E[ods.chinook.*]
         F[ods.magasin.*]
     end
-    
+
     subgraph "History Tracking (Snapshots)"
         G[snapshot_chinook_*]
         H[snapshot_magasin_*]
     end
-    
+
     subgraph "Core Warehouse (DWH)"
         I[datawarehouse.dwh_dim_*]
         J[datawarehouse.dwh_fact_invoice]
@@ -83,14 +83,14 @@ Below are the database counts reflecting the fully loaded data warehouse tables 
 | **`dwh_dim_track`** | 17,515 | Track catalog dataset including composer, album, and media definitions |
 | **`dwh_dim_playlist`** | 90 | Playlist definitions |
 | **`dwh_bridge_playlist_track`** | 43,575 | M-N relationship map between playlists and tracks |
-| **`dwh_fact_invoice`** | 1,510,950 | Unified transactional sales invoice line facts |
+| **`dwh_fact_invoice`** | 6,678 | Unified transactional sales invoice line facts |
 
 #### 2. Invoice Fact Breakdown by Source System
 | Source System | Row Count | Percentage |
 | :--- | :--- | :--- |
-| **chinook** | 1,400,000 | 92.66% |
-| **magasin** | 110,950 | 7.34% |
-| **Total** | **1,510,950** | **100.00%** |
+| **chinook** | 2,240 | 33.54% |
+| **magasin** | 4,438 | 66.46% |
+| **Total** | **6,678** | **100.00%** |
 
 ---
 
