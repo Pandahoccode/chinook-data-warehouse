@@ -1,3 +1,12 @@
+"""
+dbt Operator Helper Module
+
+This module defines a factory function to construct containerized dbt tasks
+using DockerOperator. It automatically configures local path binds, project
+environments, target schemas, and networking parameters to ensure containerized
+dbt commands can run and communicate with the Postgres database.
+"""
+
 from airflow.providers.docker.operators.docker import DockerOperator
 from docker.types import Mount
 import os
@@ -8,6 +17,16 @@ WINDOWS_PATH = os.getenv(
 )
 
 def dbt_docker_operator(task_id: str, command: str) -> DockerOperator:
+    """
+    Constructs a DockerOperator configured to run dbt-postgres commands.
+
+    Args:
+        task_id (str): The unique identifier for the Airflow task.
+        command (str): The dbt CLI command to run (e.g. 'run', 'test', 'snapshot').
+
+    Returns:
+        DockerOperator: An Airflow DockerOperator instance.
+    """
     return DockerOperator(
         task_id=task_id,
         image="ghcr.io/dbt-labs/dbt-postgres:1.9.0",
