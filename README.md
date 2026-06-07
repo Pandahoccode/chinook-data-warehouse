@@ -19,27 +19,27 @@ The warehouse implementation follows standard multi-layered dimensional modeling
 
 ```mermaid
 graph TD
-    subgraph Raw Layer
+    subgraph "Raw Layer"
         A[Chinook Raw Data]
         B[Magasin Raw Data]
     end
     
-    subgraph Staging Area (DSA)
+    subgraph "Staging Area (DSA)"
         C[dsa.chinook.*]
         D[dsa.magasin.*]
     end
     
-    subgraph Integration Area (ODS)
+    subgraph "Integration Area (ODS)"
         E[ods.chinook.*]
         F[ods.magasin.*]
     end
     
-    subgraph History Tracking (Snapshots)
+    subgraph "History Tracking (Snapshots)"
         G[snapshot_chinook_*]
         H[snapshot_magasin_*]
     end
     
-    subgraph Core Warehouse (DWH)
+    subgraph "Core Warehouse (DWH)"
         I[datawarehouse.dwh_dim_*]
         J[datawarehouse.dwh_fact_invoice]
     end
