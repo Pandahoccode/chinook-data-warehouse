@@ -2,7 +2,7 @@ chinook_dbt:
   outputs:
     dev:
       dbname: chinook
-      host: 172.18.0.8
+      host: postgres
       pass: chinook
       port: 5432
       schema: ""
