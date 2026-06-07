@@ -1,6 +1,6 @@
 from airflow import DAG
 from datetime import datetime, timedelta, timedelta
-from tasks.dbt_operator import dbt_docker_operator
+from dbt_operator import dbt_docker_operator
 
 with DAG(
     dag_id="dbt_full_pipeline",

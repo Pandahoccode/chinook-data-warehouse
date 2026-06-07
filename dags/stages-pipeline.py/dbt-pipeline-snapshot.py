@@ -5,7 +5,10 @@ import os
 from docker.types import Mount
 
 DBT_DIR = "/opt/airflow/dbt"
-WINDOWS_PATH="D:/3. Mes études/3.1 BUT SD/BUT 2 Phuc Anh/SEM_4 - DANG/chinook-data-warehouse-v2"
+WINDOWS_PATH = os.getenv(
+    "HOST_WORKSPACE_PATH",
+    "D:/04_Code-est-le-pain/401_PROJECTS/chinook-data-warehouse-v2",
+)
 
 with DAG(
     dag_id="dbt_ods_to_snapshots",
