@@ -71,6 +71,15 @@ graph TD
 *   **Purpose**: Materializes the final star-schema dimensional model. Dimensions (e.g. `dwh_dim_customer`, `dwh_dim_track`, `dwh_dim_employee`) are generated, and a unified consolidated sales invoice fact table (`dwh_fact_invoice`) maps and aggregates sales across both Chinook and Magasin.
 *   **Target Schema**: Materialized directly under the **`datawarehouse`** schema.
 
+### 📊 Warehouse Volume Statistics
+The final fact table compiles and unifies transactional volumes from both sources:
+
+| Source System | Row Count |
+| :--- | :--- |
+| **chinook** | 573,440 |
+| **magasin** | 71,008 |
+| **Total** | **644,448** |
+
 ---
 
 ## 🚀 Key Implementation Highlights
