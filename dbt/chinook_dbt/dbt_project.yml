@@ -53,14 +53,7 @@ models:
         +schema: datawarehouse
         +materialized: table
 
-snapshots:
-    target_schema: dbt_snapshots_scd
-    strategy: timestamp
-    updated_at: updated_at
-    dbt_valid_from: dbt_valid_from
-    dbt_valid_to: dbt_valid_to
-    dbt_scd_id: dbt_scd_id
-    unique_key: id
+
 
 tests:
   +store_failures: true

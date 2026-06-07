@@ -29,7 +29,7 @@ with DAG(
           task_id="dbt_run_ods_chinook",
           image="ghcr.io/dbt-labs/dbt-postgres:1.9.0",
           command="run --select ods.chinook.*",
-          network_mode="bridge",
+          network_mode="chinook-data-warehouse-v2_airflow-network",
           docker_url="unix://var/run/docker.sock",
           environment={
               "DBT_PROFILES_DIR": "/root/.dbt"
@@ -47,7 +47,7 @@ with DAG(
           task_id="dbt_run_ods_magasin",
           image="ghcr.io/dbt-labs/dbt-postgres:1.9.0",
           command="run --select ods.magasin.*",
-          network_mode="bridge",
+          network_mode="chinook-data-warehouse-v2_airflow-network",
           docker_url="unix:///var/run/docker.sock",
           environment={
               "DBT_PROFILES_DIR": "/root/.dbt"
@@ -65,7 +65,7 @@ with DAG(
           task_id="dbt_tests_ods",
           image="ghcr.io/dbt-labs/dbt-postgres:1.9.0",
           command="test --select ods.*",
-          network_mode="bridge",
+          network_mode="chinook-data-warehouse-v2_airflow-network",
           docker_url="unix:///var/run/docker.sock",
           environment={
               "DBT_PROFILES_DIR": "/root/.dbt"
