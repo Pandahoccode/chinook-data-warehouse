@@ -9,6 +9,7 @@ testing the consolidated dimensional warehouse layer (DWH) inside the PostgreSQL
 
 from airflow import DAG
 from datetime import datetime, timedelta
+# pyrefly: ignore [missing-import]
 from dbt_operator import dbt_docker_operator
 
 with DAG(
@@ -102,10 +103,21 @@ with DAG(
     )
 
     # -------------------------------------------------------------
+    # 5. Elementary Data Observability & Monitoring
+    # -------------------------------------------------------------
+    # Collects test results, metrics, and anomaly detection logs into the 'elementary' schema.
+    # We use trigger_rule="all_done" to guarantee telemetry is updated even if some tests fail.
+    dbt_run_elementary = dbt_docker_operator(
+        task_id="dbt_run_elementary",
+        command="run --select elementary",
+        trigger_rule="all_done",
+    )
+
+    # -------------------------------------------------------------
     # Dependency Configuration
     # -------------------------------------------------------------
-    # DSA -> ODS -> Snapshots -> DWH
+    # DSA -> ODS -> Snapshots -> DWH -> Elementary
     [dbt_run_dsa_chinook, dbt_run_dsa_magasin] >> dbt_tests_dsa
     dbt_tests_dsa >> [dbt_run_ods_chinook, dbt_run_ods_magasin] >> dbt_tests_ods
     dbt_tests_ods >> [dbt_run_snapshot_chinook, dbt_run_snapshot_magasin] >> dbt_tests_snapshot
-    dbt_tests_snapshot >> dbt_run_dwh >> dbt_tests_dwh
+    dbt_tests_snapshot >> dbt_run_dwh >> dbt_tests_dwh >> dbt_run_elementary

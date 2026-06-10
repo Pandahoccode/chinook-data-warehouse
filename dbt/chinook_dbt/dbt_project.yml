@@ -53,8 +53,13 @@ models:
         +schema: datawarehouse
         +materialized: table
 
+    elementary:
+      +schema: elementary
+
+
 
 
 tests:
   +store_failures: true
   +schema: dbt_test__audit
+

@@ -16,13 +16,14 @@ WINDOWS_PATH = os.getenv(
     "D:/04_Code-est-le-pain/401_PROJECTS/chinook-data-warehouse-v2",
 )
 
-def dbt_docker_operator(task_id: str, command: str) -> DockerOperator:
+def dbt_docker_operator(task_id: str, command: str, **kwargs) -> DockerOperator:
     """
     Constructs a DockerOperator configured to run dbt-postgres commands.
 
     Args:
         task_id (str): The unique identifier for the Airflow task.
         command (str): The dbt CLI command to run (e.g. 'run', 'test', 'snapshot').
+        **kwargs: Additional parameters passed to the DockerOperator (e.g., trigger_rule).
 
     Returns:
         DockerOperator: An Airflow DockerOperator instance.
@@ -51,4 +52,5 @@ def dbt_docker_operator(task_id: str, command: str) -> DockerOperator:
         working_dir="/usr/app",
         mount_tmp_dir=False,
         auto_remove="success",
+        **kwargs
     )
