@@ -19,41 +19,32 @@ The warehouse implementation follows standard multi-layered dimensional modeling
 
 ```mermaid
 graph TD
-    subgraph "Raw Layer"
+    subgraph "Bronze Layer (Raw & Landing)"
         A[Chinook Raw Data]
         B[Magasin Raw Data]
     end
 
-    subgraph "Staging Area (DSA)"
-        C[dsa.chinook.*]
-        D[dsa.magasin.*]
+    subgraph "Silver Layer (Staging & Integration / ODS)"
+        C[dsa.chinook.* / dsa.magasin.*]
+        D[ods.chinook.* / ods.magasin.*]
+        E[SCD Type 2 Snapshots]
     end
 
-    subgraph "Integration Area (ODS)"
-        E[ods.chinook.*]
-        F[ods.magasin.*]
-    end
-
-    subgraph "History Tracking (Snapshots)"
-        G[snapshot_chinook_*]
-        H[snapshot_magasin_*]
-    end
-
-    subgraph "Core Warehouse (DWH)"
-        I[datawarehouse.dwh_dim_*]
-        J[datawarehouse.dwh_fact_invoice]
+    subgraph "Gold Layer (Core Warehouse / Business Ready)"
+        F[datawarehouse.dwh_dim_*]
+        G[datawarehouse.dwh_fact_invoice]
     end
 
     A --> C
-    B --> D
-    C --> E
-    D --> F
-    E --> G
-    F --> H
-    G --> I
-    H --> I
-    I --> J
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
 ```
+
+> [!NOTE]
+> The pipeline strictly follows the Medallion Architecture (Bronze, Silver, Gold) mapped across enterprise database schemas (DSA, ODS, and Datawarehouse) to ensure clean data separation.
 
 ### 1. DSA (Data Staging Area) Layer
 *   **Purpose**: Acts as the landing zone for the raw sources. Models are built as simple SQL views. Minimal transformations are applied (e.g. data type casting).
@@ -101,6 +92,8 @@ To exceed the typical scope of university projects, the following features have 
 *   **SCD Type 2 Historical Fallbacks**: Configured fact table join conditions to fallback and join against the earliest available dimension version if historical invoices are dated prior to the oldest snapshot record.
 *   **Clean Schema Routing**: Created custom schema generation macros to override default dbt prefixes, resulting in clean, queryable production namespaces like `datawarehouse`.
 *   **Orchestration Isolation**: Every dbt execution step (run, test, snapshot) is scheduled and run as a separate, isolated task inside ephemeral Docker containers controlled by the Airflow Scheduler.
+*   **Elementary Data Observability & Postgres Fixes**: Configured the `elementary` observability package to automatically capture metrics, logs, and volume anomalies (e.g. for `dwh_fact_invoice`). Custom macro overrides (`postgres_elementary_temp_tables.sql`) were created to resolve transaction conflicts and permission errors related to temporary relations in PostgreSQL.
+*   **Failure-Resilient Telemetry**: Integrated Elementary loader runs as the final step in the Airflow DAG configured with the `all_done` trigger rule, ensuring metadata is successfully stored in the database even when upstream tests fail.
 
 ---
 
@@ -121,6 +114,31 @@ To exceed the typical scope of university projects, the following features have 
 ├── INSTRUCTION.md            # Detailed operations & development guide
 └── REQUIREMENTS.md           # WSL 2, Docker, & Python setup requirements
 ```
+
+---
+
+## 🔍 Elementary Data Observability & Monitoring
+
+Data quality and pipeline health are monitored using the **Elementary Data** dbt package. This captures real-time diagnostic logs and anomalies directly inside the data warehouse:
+
+*   **Database Schema**: All metadata, run histories, and data tests are logged in the `elementary` schema of the database.
+*   **Anomaly Detection**: Configured automated volume anomaly checks on the core fact table `dwh_fact_invoice` to monitor volume changes over a daily time-spine.
+*   **PostgreSQL Transaction Fixes**: Developed custom macro overrides in `postgres_elementary_temp_tables.sql` to resolve Redshift/Postgres transactional lock issues during temporary table creations.
+*   **Fail-Safe Orchestration**: Configured the Airflow DAG (`dbt_run_elementary` task) using the `all_done` trigger rule, ensuring observability reports are updated even if previous model tests fail.
+
+---
+
+## 📐 dbt Semantic Layer (MetricFlow)
+
+To establish a single source of truth for business intelligence, a semantic model layer is configured on top of the consolidated Gold (DWH) schema:
+
+*   **Semantic Model**: Maps the unified fact table `dwh_fact_invoice` including entities (foreign keys for `customer`, `track`, and `employee`) and dimensions (e.g. `source_system` and `invoice_date`).
+*   **Global Time Spine**: Registered the project's `date_spine` model as the primary MetricFlow time spine to allow period-over-period and offset calculations.
+*   **Exposed Metrics**:
+    *   **Simple**: `total_revenue`, `total_units_sold`, and `distinct_orders_count`.
+    *   **Ratio**: `average_order_value` (Total Revenue / Distinct Orders).
+    *   **Derived (MoM Growth)**: `revenue_growth_rate` calculating the Month-over-Month growth of total revenue.
+*   **Downstream BI Routing**: BI tools (like Streamlit or Power BI) query this semantic layer via the dbt Semantic Layer JDBC/GraphQL API Proxy, generating standardized SQL queries on the fly and ensuring formula parity.
 
 ---
 
