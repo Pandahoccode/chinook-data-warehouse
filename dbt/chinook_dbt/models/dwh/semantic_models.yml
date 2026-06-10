@@ -1,0 +1,111 @@
+# models/dwh/semantic_models.yml
+version: 2
+
+semantic_models:
+  # -------------------------------------------------------------
+  # Time Spine Model (Required for MetricFlow Period-over-Period)
+  # -------------------------------------------------------------
+  - name: date_spine
+    description: "Daily continuous calendar spine required by dbt Semantic Layer for date calculations and time offsets."
+    model: ref('date_spine')
+    defaults:
+      agg_time_dimension: date_day
+    entities:
+      - name: date_spine_day
+        type: primary
+        expr: date_day
+    dimensions:
+      - name: date_day
+        description: "The calendar date value."
+        type: time
+        type_params:
+          time_granularity: day
+
+  # -------------------------------------------------------------
+  # Unified Invoice Fact Semantic Model
+  # -------------------------------------------------------------
+  - name: dwh_fact_invoice
+    description: "Consolidated sales invoice line items mapping digital sales (Chinook) and physical store transactions (Magasin)."
+    model: ref('dwh_fact_invoice')
+    defaults:
+      agg_time_dimension: invoice_date
+
+    entities:
+      - name: invoice_line
+        type: primary
+        expr: invoice_id
+      - name: customer
+        type: foreign
+        expr: customer_fk
+      - name: track
+        type: foreign
+        expr: track_fk
+      - name: employee
+        type: foreign
+        expr: employee_fk
+
+    dimensions:
+      - name: invoice_date
+        description: "The transaction date of the sales invoice."
+        type: time
+        type_params:
+          time_granularity: day
+      - name: source_system
+        description: "The origination channel of the sale: 'chinook' (digital) or 'magasin' (physical retail)."
+        type: categorical
+
+    measures:
+      - name: total_revenue
+        description: "Sum of total monetary sales values."
+        expr: total_amount
+        agg: sum
+      - name: total_units_sold
+        description: "Sum of quantities of tracks or items purchased."
+        expr: quantity
+        agg: sum
+      - name: distinct_orders_count
+        description: "The distinct count of unique orders / invoices."
+        expr: invoice_id
+        agg: count_distinct
+
+metrics:
+  - name: total_revenue
+    label: "Total Revenue"
+    description: "The sum of total sales transaction amounts."
+    type: simple
+    type_params:
+      measure: total_revenue
+
+  - name: total_units_sold
+    label: "Total Units Sold"
+    description: "The sum of quantities sold."
+    type: simple
+    type_params:
+      measure: total_units_sold
+
+  - name: distinct_orders_count
+    label: "Distinct Orders Count"
+    description: "The count of unique sales orders."
+    type: simple
+    type_params:
+      measure: distinct_orders_count
+
+  - name: average_order_value
+    label: "Average Order Value (AOV)"
+    description: "The average revenue generated per unique sales order."
+    type: ratio
+    type_params:
+      numerator: total_revenue
+      denominator: distinct_orders_count
+
+  - name: revenue_growth_rate
+    label: "Revenue Month-over-Month (MoM) Growth Rate"
+    description: "The growth rate of total revenue compared to the previous month."
+    type: derived
+    type_params:
+      expr: (total_revenue - prev_month_revenue) / prev_month_revenue
+      metrics:
+        - name: total_revenue
+        - name: total_revenue
+          offset_window: 1 month
+          alias: prev_month_revenue

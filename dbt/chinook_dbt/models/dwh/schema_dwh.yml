@@ -1,0 +1,191 @@
+version: 2
+
+models:
+  - name: dwh_dim_customer
+    description: "Slowly Changing Dimension Type 2 table for Customers"
+    columns:
+      - name: customer_sk
+        description: "Surrogate Key (primary key)"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Business Key"
+        tests:
+          - not_null
+      - name: support_rep_id
+        description: "Reference to Employee"
+      - name: valid_from
+        description: "SCD2 Start Validity Timestamp"
+        tests:
+          - not_null
+      - name: valid_to
+        description: "SCD2 End Validity Timestamp"
+      - name: is_current
+        description: "Boolean flag representing active record"
+        tests:
+          - not_null
+
+  - name: dwh_dim_employee
+    description: "Slowly Changing Dimension Type 2 table for Employees"
+    columns:
+      - name: employee_sk
+        description: "Surrogate Key (primary key)"
+        tests:
+          - unique
+          - not_null
+      - name: employee_id
+        description: "Business Key"
+        tests:
+          - not_null
+      - name: valid_from
+        description: "SCD2 Start Validity Timestamp"
+        tests:
+          - not_null
+      - name: valid_to
+        description: "SCD2 End Validity Timestamp"
+      - name: is_current
+        description: "Boolean flag representing active record"
+        tests:
+          - not_null
+
+  - name: dwh_dim_track
+    description: "Slowly Changing Dimension Type 2 table for Tracks"
+    columns:
+      - name: track_sk
+        description: "Surrogate Key (primary key)"
+        tests:
+          - unique
+          - not_null
+      - name: track_id
+        description: "Business Key"
+        tests:
+          - not_null
+      - name: milliseconds
+        description: "Duration of track in milliseconds"
+      - name: bytes
+        description: "Size of track in bytes"
+      - name: unit_price
+        description: "Unit price of track"
+        tests:
+          - is_positive
+      - name: valid_from
+        description: "SCD2 Start Validity Timestamp"
+        tests:
+          - not_null
+      - name: valid_to
+        description: "SCD2 End Validity Timestamp"
+      - name: is_current
+        description: "Boolean flag representing active record"
+        tests:
+          - not_null
+
+  - name: dwh_dim_playlist
+    description: "Dimension table for Playlists"
+    columns:
+      - name: playlist_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+
+  - name: dwh_dim_date
+    description: "Dimension table for Dates generated from a date spine"
+    columns:
+      - name: date_id
+        description: "Primary key (date value)"
+        tests:
+          - unique
+          - not_null
+
+  - name: dwh_bridge_playlist_track
+    description: "Bridge table connecting Playlists and Tracks"
+    columns:
+      - name: playlist_id
+        description: "Foreign key to Playlist"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dwh_dim_playlist')
+              field: playlist_id
+      - name: track_id
+        description: "Foreign key to Track (business key reference)"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dwh_dim_track')
+              field: track_id
+
+  - name: dwh_fact_invoice
+    description: "Consolidated Fact Invoice Table"
+    config:
+      elementary:
+        timestamp_column: date_id
+    tests:
+      - elementary.volume_anomalies
+    columns:
+      - name: fact_id
+        description: "Primary key for the fact table (generated as system_lineid)"
+        tests:
+          - unique
+          - not_null
+      - name: customer_sk
+        description: "Foreign key referencing Customer SK (nullable for Magasin)"
+        tests:
+          - relationships:
+              to: ref('dwh_dim_customer')
+              field: customer_sk
+      - name: employee_sk
+        description: "Foreign key referencing Employee SK (nullable for Magasin)"
+        tests:
+          - relationships:
+              to: ref('dwh_dim_employee')
+              field: employee_sk
+      - name: track_sk
+        description: "Foreign key referencing Track SK (nullable for Magasin)"
+        tests:
+          - relationships:
+              to: ref('dwh_dim_track')
+              field: track_sk
+      - name: date_id
+        description: "Foreign key referencing Date"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dwh_dim_date')
+              field: date_id
+      - name: quantity
+        description: "Quantity of items purchased"
+        tests:
+          - not_null
+          - is_positive
+      - name: unit_price
+        description: "Unit price of item"
+        tests:
+          - not_null
+          - is_positive
+      - name: total_price
+        description: "Total price for the line items"
+        tests:
+          - not_null
+          - is_positive
+      - name: source_system
+        description: "Source system identifier (chinook or magasin)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['chinook', 'magasin']
+
+  - name: date_spine
+    description: "Daily continuous calendar spine required by dbt Semantic Layer for date calculations and time offsets."
+    columns:
+      - name: date_day
+        description: "The calendar date value."
+        granularity: day
+    time_spine:
+      standard_granularity_column: date_day
+
+
+
+
+
