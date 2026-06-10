@@ -5,8 +5,23 @@ chinook_dbt:
       host: postgres
       pass: chinook
       port: 5432
-      schema: ""
-      threads: 4
+      schema: public
+      threads: 1
       type: postgres
       user: chinook
   target: dev
+
+elementary:
+  outputs:
+    default:
+      dbname: chinook
+      host: postgres
+      pass: chinook
+      port: 5432
+      schema: elementary
+      threads: 1
+      type: postgres
+      user: chinook
+  target: default
+
+

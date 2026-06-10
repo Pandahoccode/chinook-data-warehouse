@@ -164,9 +164,14 @@ models:
           - not_null
       - name: customer_id
         tests:
+          - not_null
           - relationships:
               to: ref('ods_chinook_customer')
               field: customer_id
+      - name: total
+        tests:
+          - not_null
+          - is_positive
       - name: updated_at
         tests:
           - not_null
@@ -181,15 +186,26 @@ models:
           - not_null
       - name: invoice_id
         tests:
+          - not_null
           - relationships:
               to: ref('ods_chinook_invoice')
               field: invoice_id
       - name: track_id
         tests:
+          - not_null
           - relationships:
               to: ref('ods_chinook_track')
               field: track_id
+      - name: quantity
+        tests:
+          - not_null
+          - is_positive
+      - name: unit_price
+        tests:
+          - not_null
+          - is_positive
       - name: updated_at
         tests:
           - not_null
       - name: update_hour
+
