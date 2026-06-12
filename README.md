@@ -17,6 +17,8 @@ The objective of the project is to ingest and unify sales, customer, employee, a
 
 The warehouse implementation follows standard multi-layered dimensional modeling practices:
 
+![Project Graph](documentation/project-graph.png)
+
 ```mermaid
 graph TD
     subgraph "Bronze Layer (Raw & Landing)"
